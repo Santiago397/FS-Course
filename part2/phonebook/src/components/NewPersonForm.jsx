@@ -1,31 +1,54 @@
 import { useState } from "react";
+import personsServices from '../services/persons'
+
 
 const NewPersonForm = ({ persons, setPersons }) => {
   const [newName, setNewName] = useState('')
-  const [newPhone, setNewPhone] = useState('')
+  const [newNumber, setNewNumber] = useState('')
 
   const handleNewName = (e) => {
     setNewName(e.target.value)
   }
   
-  const handleNewPhone = (e) => {
-    setNewPhone(e.target.value)
+  const handleNewNumber = (e) => {
+    setNewNumber(e.target.value)
   }
 
   const handleAddPerson = (e) => {
     e.preventDefault()
     const newPerson = {
-      id: Math.floor(Math.random()),
       name: newName,
-      phone: newPhone
+      number: newNumber
     }
 
-    persons.find(person => person.name === newPerson.name)
-    ? alert(`${newName} is already added to phonebook`)
-    : setPersons([...persons, newPerson])
+    const personDuplicated = persons.find(person => person.name === newPerson.name)
 
-    setNewName('')
-    setNewPhone('')
+    personDuplicated
+    ? confirmUpdate(personDuplicated.id, newPerson)
+    : createNewPerson(newPerson)
+
+  }
+    
+  const confirmUpdate = (id, newPerson) => {
+    if (confirm(`${newPerson.name} is already added to phonebook, replace the old number with a new one?`)) {
+      personsServices
+        .update(id, newPerson)
+        .then(() => {
+          personsServices
+            .getAll()
+            .then(res => setPersons([ ...res ]))
+        })
+    }
+  }
+
+  const createNewPerson = (newPerson) => {
+    personsServices
+      .create(newPerson)
+      .then(personCreated => {
+        setPersons([...persons, personCreated])
+        setNewName('')
+        setNewNumber('')
+      }) 
   }
 
   return (
@@ -35,7 +58,7 @@ const NewPersonForm = ({ persons, setPersons }) => {
           name: <input value={newName} onChange={handleNewName} />
         </div>
         <div>
-          phone: <input value={newPhone} onChange={handleNewPhone} />
+          number: <input value={newNumber} onChange={handleNewNumber} />
         </div>
         <div>
           <button onClick={handleAddPerson} type="submit">
