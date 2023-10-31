@@ -1,8 +1,9 @@
 import { useState } from "react";
 import personsServices from '../services/persons'
+import Notification from "./Notification";
 
 
-const NewPersonForm = ({ persons, setPersons }) => {
+const NewPersonForm = ({ persons, setPersons, setMsgNotification }) => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
 
@@ -27,16 +28,41 @@ const NewPersonForm = ({ persons, setPersons }) => {
     ? confirmUpdate(personDuplicated.id, newPerson)
     : createNewPerson(newPerson)
 
+    setNewName('')
+    setNewNumber('')
+
   }
     
   const confirmUpdate = (id, newPerson) => {
-    if (confirm(`${newPerson.name} is already added to phonebook, replace the old number with a new one?`)) {
+    if (confirm(`${newPerson.name} is already added to phonebook, replace the old number with a new one?`) && id) {
       personsServices
         .update(id, newPerson)
         .then(() => {
           personsServices
             .getAll()
             .then(res => setPersons([ ...res ]))
+            .then(() => {
+              setMsgNotification({
+                text: `${newPerson.name}'s number was updated!`,
+                type: 'succesful'
+              })
+              setTimeout(() => {
+                setMsgNotification({
+                  text: null
+                })
+              }, 5000)
+            })
+        })
+        .catch(() => {
+          setMsgNotification({
+            text: `Information of '${newPerson.name}' has already been removed from server`,
+            type: 'error'
+          })
+          setTimeout(() => {
+            setMsgNotification({
+              text: null
+            })
+          }, 5000)
         })
     }
   }
@@ -46,9 +72,18 @@ const NewPersonForm = ({ persons, setPersons }) => {
       .create(newPerson)
       .then(personCreated => {
         setPersons([...persons, personCreated])
-        setNewName('')
-        setNewNumber('')
-      }) 
+      })
+      .then(() => {
+        setMsgNotification({
+          text: `${newPerson.name} number was added!`,
+          type: 'succesful'
+        })
+        setTimeout(() => {
+          setMsgNotification({
+            text: null
+          })
+        }, 5000)
+      })
   }
 
   return (
