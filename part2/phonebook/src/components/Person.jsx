@@ -1,7 +1,7 @@
 import personsServices from '../services/persons'
 
 
-const Person = ({ person, setPersons }) => {
+const Person = ({ person, setPersons, setMsgNotification }) => {
   const handleDelete = () => {
     if (confirm(`Do you want to delete: ${person.name}`)) {
       personsServices
@@ -12,6 +12,9 @@ const Person = ({ person, setPersons }) => {
             .then((persons) => {
               setPersons([...persons])
             })
+          setMsgNotification({
+            text: 'Deleted succesfully!'
+          })
         })
     }
     

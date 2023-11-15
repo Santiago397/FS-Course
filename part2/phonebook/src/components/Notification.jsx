@@ -10,7 +10,7 @@ const Notification = ({ message, setMsgNotification }) => {
   }
 
   return (
-    <div className={message.type}>
+    <div className={message.type || 'succesful'}>
       {message.text}
     </div>
   )
