@@ -70,19 +70,24 @@ const NewPersonForm = ({ persons, setPersons, setMsgNotification }) => {
   const createNewPerson = (newPerson) => {
     personsServices
       .create(newPerson)
-      .then(personCreated => {
-        setPersons([...persons, personCreated])
+      .then(() => {
+        personsServices
+          .getAll()
+          .then((persons) => {
+            setPersons([...persons])
+          })
       })
       .then(() => {
         setMsgNotification({
           text: `${newPerson.name} number was added!`,
           type: 'succesful'
         })
-        setTimeout(() => {
-          setMsgNotification({
-            text: null
-          })
-        }, 5000)
+      })
+      .catch(({ response }) => {
+        setMsgNotification({
+          text: response.data.error,
+          type: 'error'
+        })
       })
   }
 

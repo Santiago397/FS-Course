@@ -1,7 +1,7 @@
 import { useState } from "react"
 import Persons from "./Persons"
 
-const Filter = ({ persons }) => {
+const Filter = ({ persons, setPersons }) => {
 
   const [filter, setFilter] = useState('')
 
@@ -26,7 +26,7 @@ const Filter = ({ persons }) => {
         <input value={filter} onChange={handleFilter} />
       </div>
       <div>
-        <Persons persons={listFiltered} />
+        <Persons persons={listFiltered} setPersons={setPersons} />
       </div>
     </>
   )

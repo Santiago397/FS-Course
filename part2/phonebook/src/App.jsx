@@ -17,16 +17,16 @@ const App = () => {
         setPersons(initialValues)
       })
   }, [])
-  
+
   return (
     <div>
       <h1>Phonebook app</h1>
-      <Notification message={msgNotification} />
-      <Filter persons={persons} />
+      <Notification message={msgNotification} setMsgNotification={setMsgNotification} />
+      <Filter persons={persons} setPersons={setPersons} />
       <h3>Add new person</h3>
       <NewPersonForm persons={persons} setPersons={setPersons} setMsgNotification={setMsgNotification} />
       <h3>Numbers</h3>
-      <Persons persons={persons} />
+      <Persons persons={persons} setPersons={setPersons} />
     </div>
   )
 }
